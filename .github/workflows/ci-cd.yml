@@ -1,0 +1,44 @@
+name: CI/CD Pipeline
+
+# Trigger this pipeline on push to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout code
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    # Step 2: Set up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'  # Use Node 14 (or the version you prefer)
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: npm install
+
+    # Step 4: Build the React app
+    - name: Build React app
+      run: npm run build
+
+    # Step 5: Deploy to Vercel
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel_token: ${{ secrets.VERCEL_TOKEN }}
+        vercel_project_id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel_org_id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel_branch: main
+
+    # Optional Step 6: (Deploy to Firebase if needed)
+    # You can deploy to Firebase Functions if you have backend logic
+    # - name: Deploy to Firebase
+    #   run: firebase deploy --only functions --token ${{ secrets.FIREBASE_TOKEN }}
